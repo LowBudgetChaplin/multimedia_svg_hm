@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema multimedia</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 20px;
+        }
+
+        table, th, td {
+
+            border: 1px solid black;
+            text-align: left;
+            padding: 8px;
+        }
+
+        svg {
+
+            width: 50%;
+            margin: 20px;
+
+            border: 2px solid black;
+        } 
+
+        #histograma{
+            width: 100%;
+            height: 200px;
+        }
+
+        rect{
+            fill: red;
+        }
+        canvas {
+            width: 50%;
+            margin: 20px;
+            border: 2px solid black;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+    <h2>Tabel cu datele din format JSON</h2>
+    <table id="dataTable"></table>
+
+    <h2>Histograma</h2>
+    <svg id="histograma"></svg>
+
+    <h2>Grafic de tip scatter</h2>
+    <canvas id="scatterPlot" width="400" height="200"></canvas>
+
+    <script>
+
+const jsonData = 
+[
+{
+"name": "Belgium",
+"lifeExp": 80.7,
+"gdp": 119,
+"pop": 11161642
+},
+{
+"name": "Bulgaria",
+"lifeExp": 74.9,
+"gdp": 45,
+"pop": 7284552
+},
+{
+"name": "Czech Republic",
+"lifeExp": 78.3,
+"gdp": 82,
+"pop": 10516125
+},
+{
+"name": "Denmark",
+"lifeExp": 80.4,
+"gdp": 124,
+"pop": 5602628
+},
+{
+"name": "Germany",
+"lifeExp": 80.9,
+"gdp": 122,
+"pop": 80523746
+},
+{
+"name": "Estonia",
+"lifeExp": 77.5,
+"gdp": 73,
+"pop": 1320174
+},
+{
+"name": "Ireland",
+"lifeExp": 81.1,
+"gdp": 130,
+"pop": 4591087
+},
+{
+"name": "Greece",
+"lifeExp": 81.4,
+"gdp": 73,
+"pop": 11003615
+},
+{
+"name": "Spain",
+"lifeExp": 83.2,
+"gdp": 94,
+"pop": 46727890
+},
+{
+"name": "France",
+"lifeExp": 82.4,
+"gdp": 107,
+"pop": 65560721
+},
+{
+"name": "Croatia",
+"lifeExp": 77.8,
+"gdp": 61,
+"pop": 4262140
+},
+{
+"name": "Italy",
+"lifeExp": 82.9,
+"gdp": 99,
+"pop": 59685227
+},
+{
+"name": "Cyprus",
+"lifeExp": 82.5,
+"gdp": 89,
+"pop": 865878
+},
+{
+"name": "Latvia",
+"lifeExp": 74.3,
+"gdp": 64,
+"pop": 2023825
+},
+{
+"name": "Lithuania",
+"lifeExp": 74.1,
+"gdp": 73,
+"pop": 2971905
+},
+{
+"name": "Luxembourg",
+"lifeExp": 81.9,
+"gdp": 258,
+"pop": 537039
+},
+{
+"name": "Hungary",
+"lifeExp": 75.8,
+"gdp": 66,
+"pop": 9908798
+},
+{
+"name": "Malta",
+"lifeExp": 81.9,
+"gdp": 86,
+"pop": 421364
+},
+{
+"name": "Netherlands",
+"lifeExp": 81.4,
+"gdp": 131,
+"pop": 16779575
+},
+{
+"name": "Austria",
+"lifeExp": 81.3,
+"gdp": 128,
+"pop": 8451860
+},
+{
+"name": "Poland",
+"lifeExp": 77.1,
+"gdp": 67,
+"pop": 38062535
+},
+{
+"name": "Portugal",
+"lifeExp": 80.9,
+"gdp": 78,
+"pop": 10487289
+},
+{
+"name": "Romania",
+"lifeExp": 75.2,
+"gdp": 54,
+"pop": 20020074
+},
+{
+"name": "Slovenia",
+"lifeExp": 80.5,
+"gdp": 82,
+"pop": 2058821
+},
+{
+"name": "Slovakia",
+"lifeExp": 76.6,
+"gdp": 75,
+"pop": 5410836
+},
+{
+"name": "Finland",
+"lifeExp": 81.1,
+"gdp": 113,
+"pop": 5426674
+},
+{
+"name": "Sweden",
+"lifeExp": 82,
+"gdp": 127,
+"pop": 9555893
+},
+{
+"name": "United Kingdom",
+"lifeExp": 81.1,
+"gdp": 109,
+"pop": 63905297
+},
+{
+"name": "Iceland",
+"lifeExp": 82.1,
+"gdp": 119,
+"pop": 321857
+},
+{
+"name": "Norway",
+"lifeExp": 81.8,
+"gdp": 186,
+"pop": 5051275
+},
+{
+"name": "Switzerland",
+"lifeExp": 82.9,
+"gdp": 162,
+"pop": 8039060
+}
+]
+
+
+
+        // function fetchData() {
+            // fetch('http://ase.softmentor.ro/dateeu.json')            // daca incerc sa preiau datele nu-mi sunt incarcate
+            //  fetch('/data.json')                 //am preluat datele dintr-un fisier JSON creat de mine deoarece nu am putut accesa API-ul
+                // .then(response => response.json())
+                // .then(data => {
+        //             function fetchData() {
+        //             renderDataTable(data.date);
+        //             renderHistogram(data.date);
+        //             renderScatterPlot(data.date);
+        //         })
+        //         .catch(error => 
+            //console.error('Error fetching data:', error));
+        // }
+
+
+            function renderData(){
+                    renderDataTable(jsonData);
+                    renderhistograma(jsonData);
+                    renderScatterPlot(jsonData);
+                }
+
+        function renderDataTable(data) {
+
+            let table = document.getElementById("dataTable");
+
+            let tableHTML = "<tr><th>Country</th><th>Life Expectancy</th><th>GDP</th><th>Population</th></tr>";
+
+            data.forEach(function (country) {
+
+                tableHTML += "<tr><td>" + country.name + "</td><td>" + country.lifeExp + "</td><td>" + country.gdp + "</td><td>" + country.pop + "</td></tr>";
+            });
+
+            table.innerHTML = tableHTML;
+        }
+
+
+        function renderhistograma(data) {
+            let svg = document.getElementById("histograma");
+
+            let barWidth = 40;
+            let barMargin = 10;
+            let maxHeight = 200;
+
+            svg.innerHTML = "";
+
+            data.forEach(function (country, index) {
+                let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+                rect.setAttribute("x", index * (barWidth + barMargin));
+                rect.setAttribute("y", maxHeight - (country.pop / 1000000) * 5);
+                rect.setAttribute("width", barWidth);
+                rect.setAttribute("height", (country.pop / 1000000) * 5);
+
+
+                svg.appendChild(rect);
+
+            });
+
+        }
+
+
+        function renderScatterPlot(data) {
+
+            let canvas = document.getElementById("scatterPlot");
+            let ctx = canvas.getContext("2d");
+
+            data.forEach(function (country) {
+
+                let x = (country.gdp - 40) * 5;
+                let y = (200 - country.lifeExp * 2);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = "steelblue";
+                ctx.fill();
+
+
+                ctx.closePath();
+            });
+        }
+
+        window.onload = function () {
+            renderData();
+
+
+        };
+    </script>
+
+
+</body>
+</html>
